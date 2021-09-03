@@ -1,27 +1,37 @@
 package br.com.macorin.libs.commons_entity;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @MappedSuperclass
 public class BaseEntity {
+
+    private static final String ZONE_ID = "America/Sao_Paulo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date created;
+    private LocalDateTime created;
 
-    private Date updated;
+    private LocalDateTime updated;
 
     @PrePersist
     protected void onCreate() {
-        created = new Date();
+        created = now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updated = new Date();
+        updated = now();
+    }
+
+    private LocalDateTime now() {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of(ZONE_ID));
+        return now.toLocalDateTime();
     }
 
     public Long getId() {
@@ -32,19 +42,19 @@ public class BaseEntity {
         this.id = id;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
@@ -55,7 +65,7 @@ public class BaseEntity {
 
         BaseEntity that = (BaseEntity) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        return Objects.equals(id, that.id);
     }
 
     @Override
